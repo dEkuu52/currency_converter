@@ -1,0 +1,7 @@
+Welcome to our currency app.
+
+--- Main Menu ---
+
+1. Currency Converter
+
+2. List of Popular Currencies

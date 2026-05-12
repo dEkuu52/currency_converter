@@ -4,4 +4,9 @@ Welcome to our currency app.
 
 1. Currency Converter
 
-2. List of Popular Currencies
+2. Available currencies in our converter
+
+3. Today's exchange rate to the dollar
+
+If you no longer need the program, enter 'stop' and it will close.
+---    Enjoy your use    ---

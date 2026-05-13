@@ -3,21 +3,11 @@ import datetime
 import os
 from dotenv import load_dotenv
 
-# -------------- Start menu text function --------------
-def text_application():
-    try:
-        with open('rool.txt', 'r', encoding='utf-8') as file:
-            content = file.read()
-            print(content)
-    except FileNotFoundError:
-        print('File not found')
-
-
+load_dotenv()
+api_key = os.getenv("API_KEY")
 
 # -------------- Function for downloading api keys --------------
-def pars_currency(base_currency):
-    load_dotenv()
-    api_key = os.getenv("API_KEY")
+def pars_currency(base_currency = 'USD'):
     url = f'{api_key}{base_currency}'
     try:
         response = requests.get(url)
@@ -47,10 +37,17 @@ def time():
 def live_currency():
     while True:
         from_currency = input('Enter the currency you want to convert: ').upper()
-        if from_currency == 'Stop':
+        if from_currency == 'STOP':
+            main()
             break
 
+        print('If you want to exit and go to the main menu, enter "STOP"')
+
         to_currency = input('Enter the currency you are converting to: ').upper()
+
+        if to_currency == 'STOP':
+            main()
+            break
 
         rates = pars_currency(from_currency)
 
@@ -92,9 +89,14 @@ def list_currency():
         'GBP'
     ]
     result = " ".join(curr)
-    print('----------------------------------')
-    print(result)
-    print('----------------------------------')
+
+    print(f'''
+           Available currencies
+    ----------------------------------
+        {result}
+    ----------------------------------
+            ''')
+
 
 
 
@@ -104,13 +106,30 @@ def curs_today():
     to_curr = 'RUB'
     rates = pars_currency(from_curr)
     if rates and to_curr in rates:
-        print("-----------------------------------------------")
-        print(f"1 {from_curr} = {rates[to_curr]:.4f} {to_curr}")
-        print("-----------------------------------------------")
+
+        print(f'''
+        -----------------------------------------------
+        1 {from_curr} = {rates[to_curr]:.4f} {to_curr}
+        -----------------------------------------------
+                ''')
     else:
-        print("--------------------------------------------------")
-        print(f"Не удалось получить курс {from_curr} к {to_curr}.")
-        print("--------------------------------------------------")
+
+        print(f'''
+        --------------------------------------------------
+        Не удалось получить курс {from_curr} к {to_curr}.
+        --------------------------------------------------
+               ''')
+
+
+
+# -------------- Start menu text function --------------
+def text_application():
+    try:
+        with open('rool.txt', 'r', encoding='utf-8') as file:
+            content = file.read()
+            print(content)
+    except FileNotFoundError:
+        print('File not found')
 
 
 
@@ -122,7 +141,8 @@ def main():
 
         if user_selection.lower() == 'stop':
             print("Program stopped.")
-            break
+            exit()
+
 
         if user_selection == '1':
             live_currency()
@@ -135,7 +155,7 @@ def main():
 
 # -------------- Run Programm --------------
 if __name__ == '__main__':
-        main()
+    main()
 
 
 

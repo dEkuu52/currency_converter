@@ -56,8 +56,9 @@ python main.py
 ---
 
  ## 📊 Badges
- (https://img.shields.io/badge/python-3.10+-blue.svg)
- (https://img.shields.io/badge/license-MIT-green.svg)
+ ![python](python-3.10+-blue.svg)
+ ![lisence](license-MIT-green.svg)
+
 ---
 
  ## 🛡 Security

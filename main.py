@@ -5,9 +5,12 @@ from dotenv import load_dotenv
 
 # -------------- Start menu text function --------------
 def text_application():
-    with open('rool.txt', 'r', encoding='utf-8') as file:
-        content = file.read()
-        print(content)
+    try:
+        with open('rool.txt', 'r', encoding='utf-8') as file:
+            content = file.read()
+            print(content)
+    except FileNotFoundError:
+        print('File not found')
 
 
 
@@ -20,6 +23,16 @@ def pars_currency(base_currency):
         response = requests.get(url)
         data = response.json()
         return data['rates']
+    except requests.exceptions.HTTPError as http_error:
+        print(http_error)
+    except requests.exceptions.ConnectionError as conection_error:
+        print(conection_error)
+    except requests.exceptions.Timeout as timeout_error:
+        print(timeout_error)
+    except requests.exceptions.RequestException as requests_error:
+        print(requests_error)
+    except KeyError:
+        print(f'Error: {base_currency} not found')
     except Exception as e:
         print('An error occurred')
         return e
@@ -32,57 +45,79 @@ def time():
 
 # -------------- Function Converter --------------
 def live_currency():
-    from_currency = input('Enter the currency you want to convert: ').upper()
-    to_currency = input('Enter the currency you are converting to: ').upper()
-    rates = pars_currency(from_currency)
-    times = time()
+    while True:
+        from_currency = input('Enter the currency you want to convert: ').upper()
+        if from_currency == 'Stop':
+            break
 
-    if rates and to_currency in rates:
-        while True:
-            try:
-                amount = float(input(f'How much {from_currency} do you want to transfer in {to_currency}? '))
-                result = amount * rates[to_currency]
-                print(f'at the moment {times} the rate is {result} {to_currency}')
-                print('Would you like to transfer any other currencies?')
-                user_response = input('yes or no: ').lower()
-                if user_response == 'yes':
-                    live_currency()
-                elif user_response == 'no':
-                    print(text_application())
-                    break
-                else:
-                    exit()
-            except ValueError:
-                print('Input error, please try again')
+        to_currency = input('Enter the currency you are converting to: ').upper()
+
+        rates = pars_currency(from_currency)
+
+        times = time()
+
+        if rates:
+            if to_currency in rates:
+                while True:
+                    try:
+                        amount = float(input(f'How much {from_currency} do you want to transfer in {to_currency}? '))
+                        result = amount * rates[to_currency]
+                        print(f'''
+                ---------------------------------------------------
+                 at the moment {times} the rate is {result} {to_currency}
+                ---------------------------------------------------
+''')
+                        break
+
+                    except ValueError:
+                        print('Input error, please try again')
+                    except Exception as e:
+                        print(f'An error occurred {e}')
+            else:
+                print(f'Error: {to_currency} not found')
+        else:
+            print(f'Error: {from_currency} not found')
+
 
 
 # -------------- Available currencies function --------------
 def list_currency():
     curr = [
-        'usd' ,
-        'eur' ,
-        'rub' ,
-        'cyn' ,
-        'cny' ,
-        'byn' ,
-        'gbp'
+        'USD' ,
+        'EUR' ,
+        'RUB' ,
+        'CYN' ,
+        'CNY' ,
+        'BYN' ,
+        'GBP'
     ]
     result = " ".join(curr)
+    print('----------------------------------')
     print(result)
-
+    print('----------------------------------')
 
 
 
 # -------------- A function for displaying the exchange rate to the dollar for today. --------------
 def curs_today():
-    pass
+    from_curr = 'USD'
+    to_curr = 'RUB'
+    rates = pars_currency(from_curr)
+    if rates and to_curr in rates:
+        print("-----------------------------------------------")
+        print(f"1 {from_curr} = {rates[to_curr]:.4f} {to_curr}")
+        print("-----------------------------------------------")
+    else:
+        print("--------------------------------------------------")
+        print(f"Не удалось получить курс {from_curr} к {to_curr}.")
+        print("--------------------------------------------------")
 
 
 
 # -------------- Main Function --------------
 def main():
-    while True:  # Добавляем бесконечный цикл
-        text_application()
+    text_application()
+    while True:
         user_selection = input('Enter the function you need (or type "stop" to exit): ')
 
         if user_selection.lower() == 'stop':
@@ -95,10 +130,13 @@ def main():
             list_currency()
         elif user_selection == '3':
             curs_today()
+        else:
+            print('Invalid input, please try again')
 
 # -------------- Run Programm --------------
 if __name__ == '__main__':
         main()
+
 
 
 

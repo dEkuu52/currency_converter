@@ -33,7 +33,7 @@ def time():
     return formatted_date
 
 
-# -------------- Function Converter --------------
+# -------------- Function Converter ---------------
 def live_currency():
     while True:
         from_currency = input('Enter the currency you want to convert: ').upper()

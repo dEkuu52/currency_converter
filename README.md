@@ -56,8 +56,8 @@ python main.py
 ---
 
  ## 📊 Badges
- ![python](python-3.10+-blue.svg)
- ![lisence](license-MIT-green.svg)
+ ![python](img/python-3.10+-blue.svg)
+ ![lisence](img/license-MIT-green.svg)
 
 ---
 

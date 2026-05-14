@@ -6,26 +6,28 @@ from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv("API_KEY")
 
+
 # -------------- Function for downloading api keys --------------
 def pars_currency(base_currency = 'USD'):
-    url = f'{api_key}{base_currency}'
+    url = f"https://v6.exchangerate-api.com/v6/latest/{base_currency}"
+    headers = {"Authorization": f"Bearer {api_key}"}
     try:
-        response = requests.get(url)
+        response = requests.get(url , headers=headers)
         data = response.json()
-        return data['rates']
+        return data['conversion_rates']
     except requests.exceptions.HTTPError as http_error:
-        print(http_error)
+        print(f'HTTP Error {http_error}')
     except requests.exceptions.ConnectionError as conection_error:
-        print(conection_error)
+        print(f'Conection Error {conection_error}')
     except requests.exceptions.Timeout as timeout_error:
-        print(timeout_error)
+        print(f'Timeout Error{timeout_error}')
     except requests.exceptions.RequestException as requests_error:
-        print(requests_error)
+        print(f'Requests Error{requests_error}')
     except KeyError:
         print(f'Error: {base_currency} not found')
     except Exception as e:
-        print('An error occurred')
-        return e
+        print(f'An error occurred {e}')
+        return None
 
 def time():
     today_date = datetime.date.today()
@@ -33,21 +35,22 @@ def time():
     return formatted_date
 
 
+
 # -------------- Function Converter ---------------
 def live_currency():
     while True:
         from_currency = input('Enter the currency you want to convert: ').upper()
         if from_currency == 'STOP':
-            main()
-            break
+            return main()
+
 
         print('If you want to exit and go to the main menu, enter "STOP"')
 
         to_currency = input('Enter the currency you are converting to: ').upper()
 
         if to_currency == 'STOP':
-            main()
-            break
+            return main()
+
 
         rates = pars_currency(from_currency)
 
@@ -83,7 +86,7 @@ def list_currency():
         'USD' ,
         'EUR' ,
         'RUB' ,
-        'CYN' ,
+        'KZT' ,
         'CNY' ,
         'BYN' ,
         'GBP'
@@ -116,7 +119,7 @@ def curs_today():
 
         print(f'''
         --------------------------------------------------
-        Не удалось получить курс {from_curr} к {to_curr}.
+        Failed to receive course {from_curr} in {to_curr}.
         --------------------------------------------------
                ''')
 

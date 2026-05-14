@@ -18,24 +18,18 @@ A convenient console-based tool for instant currency conversion. The application
 
 ---
 
- ## 🛠 Installation Guide
-
- #### 1. Clone the Repository
-git clone https://github.com/dEkuu52/currency-converter.git
-cd currency-converter
+ ## 💿 project deployment
 
 
- #### 2. Install Dependencies
-Ensure you have Python 3.8+ installed. Install the required libraries:
-pip install requests python-dotenv
+     git clone https://github.com/dEkuu52/currency_converter.git
+     cd currency_converter
+     python -m venv venv
+     source venv/bin/activate or .\venv\Scripts\activate на Windows
+     pip install -r requirements.txt
+     python main.py
 
 
- #### 3. Environment Setup
-Create a .env file in the root directory of the project:
-touch .env
-Add your API key (recommended to use [ExchangeRate-API](https://www.exchangerate-api.com/)):env
-API_KEY=https://v6.exchangerate-api.com/v6/YOUR_KEY_HERE/latest/
-
+ 
 
 ---
 
@@ -53,11 +47,13 @@ python main.py
 | **2**    | List: view popular currency codes. |
 | **3**    | Daily rate: instantly display the value of 1 USD in RUB. |
 | **stop** | Exit: safely shut down the program. |
+
+
 ---
 
  ## 📊 Badges
  ![python](img/python-3.10+-blue.svg)
- ![lisence](img/license-MIT-green.svg)
+ 
 
 ---
 

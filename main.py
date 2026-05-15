@@ -5,16 +5,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 api_key = os.getenv("API_KEY")
+url = "https://v6.exchangerate-api.com/v6/latest/USD"
+headers = {"Authorization": f"Bearer {api_key}"}
 
+
+exchange_rates = None
 
 # -------------- Function for downloading api keys --------------
-def pars_currency(base_currency = 'USD'):
-    url = f"https://v6.exchangerate-api.com/v6/latest/{base_currency}"
-    headers = {"Authorization": f"Bearer {api_key}"}
+def pars_currency():
+    global exchange_rates
+
     try:
         response = requests.get(url , headers=headers)
         data = response.json()
-        return data['conversion_rates']
+        exchange_rates = data['conversion_rates']
+        return True
     except requests.exceptions.HTTPError as http_error:
         print(f'HTTP Error {http_error}')
     except requests.exceptions.ConnectionError as conection_error:
@@ -24,10 +29,10 @@ def pars_currency(base_currency = 'USD'):
     except requests.exceptions.RequestException as requests_error:
         print(f'Requests Error{requests_error}')
     except KeyError:
-        print(f'Error: {base_currency} not found')
+        print(f'Error: USD not found')
     except Exception as e:
         print(f'An error occurred {e}')
-        return None
+        return False
 
 def time():
     today_date = datetime.date.today()
@@ -38,10 +43,16 @@ def time():
 
 # -------------- Function Converter ---------------
 def live_currency():
+    global exchange_rates
+
+    if not exchange_rates:
+        print('courses are not loaded')
+        return
+
     while True:
         from_currency = input('Enter the currency you want to convert: ').upper()
         if from_currency == 'STOP':
-            return main()
+            return
 
 
         print('If you want to exit and go to the main menu, enter "STOP"')
@@ -49,19 +60,16 @@ def live_currency():
         to_currency = input('Enter the currency you are converting to: ').upper()
 
         if to_currency == 'STOP':
-            return main()
-
-
-        rates = pars_currency(from_currency)
+            return
 
         times = time()
 
-        if rates:
-            if to_currency in rates:
+        if exchange_rates:
+            if to_currency in exchange_rates:
                 while True:
                     try:
                         amount = float(input(f'How much {from_currency} do you want to transfer in {to_currency}? '))
-                        result = amount * rates[to_currency]
+                        result = amount * (exchange_rates[to_currency] / exchange_rates[from_currency])
                         print(f'''
                 ---------------------------------------------------
                  at the moment {times} the rate is {result} {to_currency}
@@ -105,23 +113,25 @@ def list_currency():
 
 # -------------- A function for displaying the exchange rate to the dollar for today. --------------
 def curs_today():
-    from_curr = 'USD'
-    to_curr = 'RUB'
-    rates = pars_currency(from_curr)
-    if rates and to_curr in rates:
+    global exchange_rates
 
-        print(f'''
-        -----------------------------------------------
-        1 {from_curr} = {rates[to_curr]:.4f} {to_curr}
-        -----------------------------------------------
-                ''')
+    if exchange_rates is None:
+        print('Error, please try again')
+        return
+
+    if 'RUB' in exchange_rates:
+        print(f"""
+         ------------------------
+            1 USD = {exchange_rates['RUB']:.4f} RUB 
+         ------------------------
+""")
     else:
+        print(f"""
+    --------------------------------------------------
+        Failed to receive course USD in RUB.
+    --------------------------------------------------
+""")
 
-        print(f'''
-        --------------------------------------------------
-        Failed to receive course {from_curr} in {to_curr}.
-        --------------------------------------------------
-               ''')
 
 
 
@@ -138,6 +148,11 @@ def text_application():
 
 # -------------- Main Function --------------
 def main():
+    if not pars_currency():
+        print('Internet problems, try restarting the program')
+        return
+
+
     text_application()
     while True:
         user_selection = input('Enter the function you need (or type "stop" to exit): ')
